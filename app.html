@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css" media="screen" title="no title">
+  </head>
+  <body>
+
+
+
+<style media="screen">
+  nav{
+    background: #f3f3f3;
+  }
+</style>
+
+
+
+    <nav>
+
+     </nav>
+
+
+
+
+
+
+
+
+
+    <div id="chatbox"></div>
+
+    <div id="input">
+      <input>
+    </div>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+<script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+<!-- <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase-auth.js"></script> -->
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyB7jUpwdHg-FxKBUK1kP_gZIPxgzbqCPkc",
+    authDomain: "twitter-chat-b5ce2.firebaseapp.com",
+    databaseURL: "https://twitter-chat-b5ce2.firebaseio.com",
+    storageBucket: "twitter-chat-b5ce2.appspot.com",
+    messagingSenderId: "723253120900"
+  };
+
+  firebase.initializeApp(config);
+
+
+
+  </script>
+
+    <script type="text/javascript">
+if (!localStorage.getItem('usuario')){
+  window.location.replace("index.html")
+}
+    var db = firebase.database();
+
+     var user =localStorage.getItem('usuario')
+     var {nombre, foto}=JSON.parse(user)
+     console.log(nombre,foto);
+    $("#welcome").text("welcome, " + nombre + "!")
+
+
+    $("#input").keypress(e => {
+      if ( e.keyCode === 13){
+        sendMsg()
+      }
+    })
+
+    const sendMsg =  () => {
+      const message = $("#input").val()
+      $("#input").val('')
+      db.ref().push({message, foto, nombre})
+    }
+
+db.ref().on('child_added', snapshot=>{
+  displayChatMessage(snapshot.val())
+})
+
+
+const displayChatMessage = data => {
+  const {nombre, foto, message} = data
+
+  $('#chatbox').append(`
+    <div class="card blue-grey darken-1">
+      <div class="card-content white-text">
+        <p class="card-title"> <img src="${foto}"> ${nombre}</p>
+        <p id="bubble">${message}</p>
+      </div>
+    </div>
+
+    `)
+    $("#chatbox")[0].scrollTop = $("#chatbox")[0].scrollHeight
+}
+
+
+$("#logout").click(function(){
+  localStorage.clear()
+  window.location.replace("index.html")
+})
+
+    </script>
+
+  </body>
+</html>
